@@ -3,15 +3,27 @@ import numpy as np
 import os
 
 
-def preparaDati(stb_data):
-    stb_data = pd.read_csv("data" + os.sep + "datiOutput.csv", sep=",")
-
+def rinominaColonne(stb_data):
     # levo colonna vuota iniziale con id
     stb_data.rename(columns={stb_data.columns[0]: "ID"}, inplace=True)
     stb_data.drop(columns="ID", inplace=True)
-    return stb_data
+
+    # rinomino time
+    stb_data.rename(columns={"_time": "time"}, inplace=True)
+
+    # rendo lowercase nomi colonne
+    stb_data.columns = stb_data.columns.str.lower()
+
+
+def manipolaColonne(stb_data):
+    print("todo, manipolazione colonne")
+
+
+def preparaDati(stb_data):
+    rinominaColonne(stb_data)
+    manipolaColonne(stb_data)
 
 
 stb_data = pd.read_csv("data" + os.sep + "datiOutput.csv", sep=",")
-stb_data = preparaDati(stb_data)
+preparaDati(stb_data)
 print(stb_data)
