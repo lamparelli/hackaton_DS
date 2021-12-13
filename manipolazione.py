@@ -23,7 +23,19 @@ def eliminaColonne(stb_data):
     #elimino le colonne
     stb_data.drop(columns=colsDaEliminare, inplace=True) 
 
+def splitColonne(stb_data):
+    #estraggo i valori di interesse da ogni colonna con dati innestati creando una nuova colonna per ogni dato
+
+    stb_data['aamp_abr_bw_split_nwbw'] = stb_data['aamp_abr_bw_split'].str.extract(r'NwBW=([0-9]+)', expand=True)
+    stb_data.drop(columns='aamp_abr_bw_split',inplace=True)
+
+    stb_data['ap_info_split_rssi'] = stb_data['ap_info_split'].str.extract(r'rssi=(-?[0-9]+)', expand=True) 
+    stb_data['ap_info_split_avgrssi']  = stb_data['ap_info_split'].str.extract(r'AvgRssi=(-?[0-9]+)', expand=True) 
+    stb_data['ap_info_split_bandghz']  = stb_data['ap_info_split'].str.extract(r'Band=(2\.4|2,4|5)GHz', expand=True) 
+    stb_data.drop(columns='ap_info_split',inplace=True)     
+
 def preparaDati(stb_data):
     rinominaColonne(stb_data)
     eliminaColonne(stb_data)
+    splitColonne(stb_data)
     manipolaColonne(stb_data)
