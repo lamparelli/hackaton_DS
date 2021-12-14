@@ -15,7 +15,7 @@ def rinominaColonne(stb_data):
 
 
 def gestioneValoriMancanti(stb_data):
-    eventCols = lettura_dati.getEventCols(stb_data)
+    eventCols = lettura_dati.getEventiCols(stb_data)
     for col in eventCols:
         stb_data[col].replace(np.nan, 0, inplace=True)
 
@@ -29,7 +29,7 @@ def eliminaColonne(stb_data):
 
     # il cliente ha detto di concentrarsi su queste colonne osm; sono secondarie le altre
     osmPrincipali = ["syst_info_osm_bbdconnect_ott", "syst_info_osm_berr_atv", "syst_info_osm_contentnotfound", "syst_info_osm_ottbuffering", "syst_info_osm_techfaultott_atv"]
-    osmCols = lettura_dati.getOsmCols(stb_data)
+    osmCols = lettura_dati.getEventiOsmCols(stb_data)
     osmColsDaEliminare = osmCols.drop(osmPrincipali) # sono da eliminare tutte le osm, tranne le principali
     stb_data.drop(columns = osmColsDaEliminare, inplace=True)
 
