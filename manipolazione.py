@@ -35,12 +35,14 @@ def eliminaEventiSecondari(stb_data):
     eventiBgDaDroppare = eventiBg[eventiBg.str.contains("info")]
     stb_data.drop(columns=eventiBgDaDroppare, inplace=True)
 
-def eliminaColonne(stb_data):
-    cols = pd.Series(stb_data.columns)
-
+def eliminaSplitNonRichiesti(stb_data):
     # il cliente ha detto di lasciare, fra le colonne son split nel nome, solo aamp_abr_bw_split e ap_split
+    cols = stb_data.columns
     colsDaEliminare = cols[(cols.str.contains("_split") & (~cols.str.contains("aamp_abr_bw_split") & (~cols.str.contains("ap_split"))))] 
     stb_data.drop(columns=colsDaEliminare, inplace=True) 
+
+def eliminaColonne(stb_data):
+    eliminaSplitNonRichiesti(stb_data)
 
     # da valutare se filtrare o meno i dati secondari
     # eliminaOsmSecondari(stb_data)
@@ -72,10 +74,20 @@ def processaColonneMem(stb_data):
     for col in colsMem:
         stb_data[col] = stb_data[col].str.extract(r'^([0-9]+)m$', expand=True).astype(float)
 
+def processColonnaCarico(stb_data):
+    stb_data["load1"] = stb_data["load_average"].str.extract(r'^(0\.[0-9]+) 0\.[0-9]+ 0\.[0-9]+').astype(float)
+    stb_data["load2"] = stb_data["load_average"].str.extract(r'^0\.[0-9]+ (0\.[0-9]+) 0\.[0-9]+').astype(float)
+    stb_data["load3"] = stb_data["load_average"].str.extract(r'^0\.[0-9]+ 0\.[0-9]+ (0\.[0-9]+)').astype(float)
+    
+    stb_data["avg_load"] = stb_data[["load1", "load2", "load3"]].mean(axis=1)
+    stb_data["max_load"] = stb_data[["load1", "load2", "load3"]].max(axis=1)
+    stb_data.drop(columns=["load_average", "load1", "load2", "load3"], inplace=True)
+
 def processaColonne(stb_data):
     #estraggo i valori di interesse da ogni colonna con dati innestati creando una nuova colonna per ogni dato
     processaColonneSplit(stb_data)
     processaColonneMem(stb_data)
+    processColonnaCarico(stb_data)
 
 def preparaDatiPerAnalisi(stb_data):
     rinominaColonne(stb_data)
