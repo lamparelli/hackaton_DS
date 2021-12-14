@@ -7,4 +7,4 @@ import visualizzazione
 
 
 stb_data = pd.read_csv("data" + os.sep + "datiOutput.csv", sep=",")
-manipolazione.preparaDati(stb_data)
+manipolazione.preparaDatiPerAnalisi(stb_data)
