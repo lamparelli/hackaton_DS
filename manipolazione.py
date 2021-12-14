@@ -29,7 +29,7 @@ def eliminaOsmSecondari(stb_data):
 def eliminaEventiSecondari(stb_data):
     # il cliente ha suggerito di concentrarsi sugli eventi di tipo warn / err, e ignorare quelli info
     eventiBg = lettura_dati.getEventiBackgroundCols(stb_data)
-    eventiBgDaDroppare = eventiBg.str.contains("info")
+    eventiBgDaDroppare = eventiBg[eventiBg.str.contains("info")].drop("ap_info_split")
     stb_data.drop(columns=eventiBgDaDroppare, inplace=True)
 
 def eliminaColonne(stb_data):
