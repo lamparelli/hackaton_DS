@@ -18,3 +18,6 @@ def mostraSampleDati(stb_data, cols = None, numValoriSamplePerColonna = 10):
         vals.append(sampleValoriColonna)
     sample = pd.concat(vals, axis=1)
     return sample
+
+def getDataframeConColonneOrdinate(stb_data):
+    return stb_data.reindex(sorted(stb_data.columns), axis=1)
