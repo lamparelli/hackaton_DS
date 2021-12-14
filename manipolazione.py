@@ -19,6 +19,13 @@ def gestioneValoriMancanti(stb_data):
     for col in eventCols:
         stb_data[col].replace(np.nan, 0, inplace=True)
 
+def eliminaOsmSecondari(stb_data):
+    # il cliente ha detto di concentrarsi su queste colonne osm; sono secondarie le altre
+    osmPrincipali = ["syst_info_osm_bbdconnect_ott", "syst_info_osm_berr_atv", "syst_info_osm_contentnotfound", "syst_info_osm_ottbuffering", "syst_info_osm_techfaultott_atv"]
+    osmCols = lettura_dati.getEventiOsmCols(stb_data)
+    osmColsDaEliminare = osmCols.drop(osmPrincipali) # sono da eliminare tutte le osm, tranne le principali
+    stb_data.drop(columns = osmColsDaEliminare, inplace=True)
+
 def eliminaColonne(stb_data):
     pd.set_option("max_rows", None)
     cols = pd.Series(stb_data.columns)
@@ -27,11 +34,7 @@ def eliminaColonne(stb_data):
     colsDaEliminare = cols[(cols.str.contains("_split") & (~cols.str.contains("aamp_abr_bw_split") & (~cols.str.contains("ap_info_split"))))] 
     stb_data.drop(columns=colsDaEliminare, inplace=True) 
 
-    # il cliente ha detto di concentrarsi su queste colonne osm; sono secondarie le altre
-    osmPrincipali = ["syst_info_osm_bbdconnect_ott", "syst_info_osm_berr_atv", "syst_info_osm_contentnotfound", "syst_info_osm_ottbuffering", "syst_info_osm_techfaultott_atv"]
-    osmCols = lettura_dati.getEventiOsmCols(stb_data)
-    osmColsDaEliminare = osmCols.drop(osmPrincipali) # sono da eliminare tutte le osm, tranne le principali
-    stb_data.drop(columns = osmColsDaEliminare, inplace=True)
+    eliminaOsmSecondari(stb_data)
 
 def splitColonne(stb_data):
     #estraggo i valori di interesse da ogni colonna con dati innestati creando una nuova colonna per ogni dato
