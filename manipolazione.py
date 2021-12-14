@@ -34,6 +34,22 @@ def splitColonne(stb_data):
     stb_data['ap_info_split_bandghz']  = stb_data['ap_info_split'].str.extract(r'Band=(2\.4|2,4|5)GHz', expand=True) 
     stb_data.drop(columns='ap_info_split',inplace=True)     
 
+def getEventCols(stb_data):
+    cols = stb_data.columns
+    return cols[(cols.str.contains("err") | cols.str.contains("info") | cols.str.contains("warn]"))]
+
+def getNonOsmEventCols(stb_data):
+    cols = stb_data.columns
+    return cols[~cols.str.contains("osm") & (cols.str.contains("err") | cols.str.contains("info") | cols.str.contains("warn]"))]
+
+def getOsmCols(stb_data):
+    cols = stb_data.columns
+    return cols[cols.str.contains("osm")]
+
+def getStateCols(stb_data):
+    cols = stb_data.columns
+    return cols[~cols.str.contains("err") & ~cols.str.contains("info") & ~cols.str.contains("warn") & ~cols.contains("mac") & ~cols.contains("time")]
+
 def preparaDati(stb_data):
     rinominaColonne(stb_data)
     eliminaColonne(stb_data)
