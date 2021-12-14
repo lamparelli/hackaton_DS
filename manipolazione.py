@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+import lettura_dati
 
 def rinominaColonne(stb_data):
     # levo colonna vuota iniziale con id
@@ -12,15 +14,17 @@ def rinominaColonne(stb_data):
     stb_data.columns = stb_data.columns.str.lower()
 
 
-def manipolaColonne(stb_data):
-    print("todo, manipolazione colonne")
+def gestioneValoriMancanti(stb_data):
+    eventCols = lettura_dati.getEventCols(stb_data)
+    for col in eventCols:
+        stb_data[col].replace(np.nan, 0, inplace=True)
 
 def eliminaColonne(stb_data):
     pd.set_option("max_rows", None)
     cols = pd.Series(stb_data.columns)
-    #tutte le colonne da eliminare in quanto hanno _split
+
+    # il cliente ha detto di lasciare, fra le colonne son split nel nome, solo aamp_abr_bw_split e ap_info_split
     colsDaEliminare = cols[(cols.str.contains("_split") & (~cols.str.contains("aamp_abr_bw_split") & (~cols.str.contains("ap_info_split"))))] 
-    #elimino le colonne
     stb_data.drop(columns=colsDaEliminare, inplace=True) 
 
 def splitColonne(stb_data):
@@ -38,4 +42,4 @@ def preparaDati(stb_data):
     rinominaColonne(stb_data)
     eliminaColonne(stb_data)
     splitColonne(stb_data)
-    manipolaColonne(stb_data)
+    gestioneValoriMancanti(stb_data)
