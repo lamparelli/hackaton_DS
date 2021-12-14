@@ -35,12 +35,14 @@ def eliminaEventiSecondari(stb_data):
     eventiBgDaDroppare = eventiBg[eventiBg.str.contains("info")]
     stb_data.drop(columns=eventiBgDaDroppare, inplace=True)
 
-def eliminaColonne(stb_data):
-    cols = pd.Series(stb_data.columns)
-
+def eliminaSplitNonRichiesti(stb_data):
     # il cliente ha detto di lasciare, fra le colonne son split nel nome, solo aamp_abr_bw_split e ap_split
+    cols = stb_data.columns
     colsDaEliminare = cols[(cols.str.contains("_split") & (~cols.str.contains("aamp_abr_bw_split") & (~cols.str.contains("ap_split"))))] 
     stb_data.drop(columns=colsDaEliminare, inplace=True) 
+
+def eliminaColonne(stb_data):
+    eliminaSplitNonRichiesti(stb_data)
 
     # da valutare se filtrare o meno i dati secondari
     # eliminaOsmSecondari(stb_data)
