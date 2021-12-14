@@ -8,5 +8,3 @@ import visualizzazione
 
 stb_data = pd.read_csv("data" + os.sep + "datiOutput.csv", sep=",")
 manipolazione.preparaDati(stb_data)
-# visualizzazione.mostraSampleDati(stb_data)
-stb_data.to_csv("data\\datiElaborati.csv")

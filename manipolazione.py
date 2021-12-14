@@ -22,6 +22,7 @@ def gestioneValoriMancanti(stb_data):
 def eliminaColonne(stb_data):
     pd.set_option("max_rows", None)
     cols = pd.Series(stb_data.columns)
+
     # il cliente ha detto di lasciare, fra le colonne son split nel nome, solo aamp_abr_bw_split e ap_info_split
     colsDaEliminare = cols[(cols.str.contains("_split") & (~cols.str.contains("aamp_abr_bw_split") & (~cols.str.contains("ap_info_split"))))] 
     stb_data.drop(columns=colsDaEliminare, inplace=True) 
