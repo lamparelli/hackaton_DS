@@ -26,6 +26,12 @@ def eliminaOsmSecondari(stb_data):
     osmColsDaEliminare = osmCols.drop(osmPrincipali) # sono da eliminare tutte le osm, tranne le principali
     stb_data.drop(columns = osmColsDaEliminare, inplace=True)
 
+def eliminaEventiSecondari(stb_data):
+    # il cliente ha suggerito di concentrarsi sugli eventi di tipo warn / err, e ignorare quelli info
+    eventiBg = lettura_dati.getEventiBackgroundCols(stb_data)
+    eventiBgDaDroppare = eventiBg.str.contains("info")
+    stb_data.drop(columns=eventiBgDaDroppare, inplace=True)
+
 def eliminaColonne(stb_data):
     pd.set_option("max_rows", None)
     cols = pd.Series(stb_data.columns)
@@ -35,6 +41,7 @@ def eliminaColonne(stb_data):
     stb_data.drop(columns=colsDaEliminare, inplace=True) 
 
     eliminaOsmSecondari(stb_data)
+    eliminaEventiSecondari(stb_data)
 
 def splitColonne(stb_data):
     #estraggo i valori di interesse da ogni colonna con dati innestati creando una nuova colonna per ogni dato
