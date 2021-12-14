@@ -54,20 +54,32 @@ def eliminaRigheSenzaOsm(stb_data):
 def eliminaRighe(stb_data):
     eliminaRigheSenzaOsm(stb_data)
 
-def pulisciDatiColonne(stb_data):
-    #estraggo i valori di interesse da ogni colonna con dati innestati creando una nuova colonna per ogni dato
-
+def processaColonneSplit(stb_data):
     stb_data['aamp_abr_bw_split_nwbw'] = stb_data['aamp_abr_bw_split'].str.extract(r'NwBW=([0-9]+)', expand=True)
     stb_data.drop(columns='aamp_abr_bw_split',inplace=True)
 
     stb_data['ap_split_rssi'] = stb_data['ap_split'].str.extract(r'rssi=(-?[0-9]+)', expand=True) 
     stb_data['ap_split_avgrssi']  = stb_data['ap_split'].str.extract(r'AvgRssi=(-?[0-9]+)', expand=True) 
     stb_data['ap_split_bandghz']  = stb_data['ap_split'].str.extract(r'Band=(2\.4|2,4|5)GHz', expand=True) 
-    stb_data.drop(columns='ap_split',inplace=True)     
+    stb_data.drop(columns='ap_split',inplace=True) 
+
+def processaColonneMem(stb_data):
+    colsMem = ["mem_appsserviced", "mem_epg_ui", "mem_fogcli", 
+    "mem_mediarite", "mem_netsrvmgr", "mem_rdkbrowser2", "mem_rmfstreamer", 
+    "mem_skycobalt", "mem_subttxrend-app", "mem_tr69hostif", "mem_wpeframework", 
+    "mem_wpenetworkprocess", "mem_wpeprocess", "mem_wpewebprocess", "mem_xcal-device"]
+
+    for col in colsMem:
+        stb_data[col] = stb_data[col].str.extract(r'^([0-9]+)m$', expand=True).astype(float)
+
+def processaColonne(stb_data):
+    #estraggo i valori di interesse da ogni colonna con dati innestati creando una nuova colonna per ogni dato
+    processaColonneSplit(stb_data)
+    processaColonneMem(stb_data)
 
 def preparaDatiPerAnalisi(stb_data):
     rinominaColonne(stb_data)
     eliminaColonne(stb_data)
     eliminaRighe(stb_data)
-    pulisciDatiColonne(stb_data)
+    processaColonne(stb_data)
     gestioneValoriMancanti(stb_data)
