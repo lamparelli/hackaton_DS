@@ -17,4 +17,4 @@ def mostraSampleDati(stb_data, cols = None, numValoriSamplePerColonna = 10):
         sampleValoriColonna = pd.Series(sampleValoriColonna).rename(col)
         vals.append(sampleValoriColonna)
     sample = pd.concat(vals, axis=1)
-    print(sample)
+    return sample
