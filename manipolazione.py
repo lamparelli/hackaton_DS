@@ -57,12 +57,12 @@ def eliminaRighe(stb_data):
     eliminaRigheSenzaOsm(stb_data)
 
 def processaColonneSplit(stb_data):
-    stb_data['aamp_abr_bw_split_nwbw'] = stb_data['aamp_abr_bw_split'].str.extract(r'NwBW=([0-9]+)', expand=True)
+    stb_data['aamp_abr_bw_split_nwbw'] = stb_data['aamp_abr_bw_split'].str.extract(r'NwBW=([0-9]+)', expand=True).astype(float)
     stb_data.drop(columns='aamp_abr_bw_split',inplace=True)
 
-    stb_data['ap_split_rssi'] = stb_data['ap_split'].str.extract(r'rssi=(-?[0-9]+)', expand=True) 
-    stb_data['ap_split_avgrssi']  = stb_data['ap_split'].str.extract(r'AvgRssi=(-?[0-9]+)', expand=True) 
-    stb_data['ap_split_bandghz']  = stb_data['ap_split'].str.extract(r'Band=(2\.4|2,4|5)GHz', expand=True) 
+    stb_data['ap_split_rssi'] = stb_data['ap_split'].str.extract(r'rssi=(-?[0-9]+)', expand=True).astype(float)
+    stb_data['ap_split_avgrssi']  = stb_data['ap_split'].str.extract(r'AvgRssi=(-?[0-9]+)', expand=True).astype(float)
+    stb_data['ap_split_bandghz']  = stb_data['ap_split'].str.extract(r'Band=(2\.4GHz|2,4GHz|5GHz)', expand=True) 
     stb_data.drop(columns='ap_split',inplace=True) 
 
 def processaColonneMem(stb_data):
