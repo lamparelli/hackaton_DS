@@ -26,8 +26,8 @@ def convertiDatiBasketInInfoPresenza(datoBasket):
 
 def convertiFormatoDati(regoleAssociative):
     # normalmente sono stringhe in formato frozenset, nelle quali non si può fare str.contains
-    regoleAssociative["antecedents"] = regoleAssociative["antecedents"].astype(str).str.extract(r'\(\{\'(.+)\'\}\)')
-    regoleAssociative["consequents"] = regoleAssociative["consequents"].astype(str).str.extract(r'\(\{\'(.+)\'\}\)')
+    regoleAssociative["antecedents"] = regoleAssociative["antecedents"].astype(str).str.extract(r'\(\{(.+)\}\)')[0].str.replace("'", "").str.replace(", ", ",")
+    regoleAssociative["consequents"] = regoleAssociative["consequents"].astype(str).str.extract(r'\(\{(.+)\}\)')[0].str.replace("'", "").str.replace(", ", ",")
 
 def filtraOsmInConseguenze(regoleAssociative):
     return regoleAssociative[regoleAssociative["consequents"].str.contains("osm")]
