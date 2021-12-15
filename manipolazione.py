@@ -57,9 +57,6 @@ def eliminaRigheSenzaOsm(stb_data):
     stb_data["messaggi_presenti"] = stb_data[lettura_dati.getEventiOsmCols(stb_data)].sum(axis=1) > 0
     stb_data.drop(stb_data[~stb_data["messaggi_presenti"]].index, inplace=True)
 
-def eliminaRighe(stb_data):
-    eliminaRigheSenzaOsm(stb_data)
-
 def processaColonneSplit(stb_data):
     stb_data['aamp_abr_bw_split_nwbw'] = stb_data['aamp_abr_bw_split'].str.extract(r'NwBW=([0-9]+)', expand=True).astype(float)
     stb_data.drop(columns='aamp_abr_bw_split',inplace=True)
@@ -108,7 +105,7 @@ def preparaDatiPerAnalisi(stb_data):
     eliminaOsmSuperflui(stb_data)
     eliminaEventiSecondari(stb_data)
     eliminaColonneEventiMaiAvvenuti(stb_data)
-    eliminaRighe(stb_data)
+    eliminaRigheSenzaOsm(stb_data)
 
 def preparaDatiPerReport(stb_data):
     preparaDati(stb_data)
