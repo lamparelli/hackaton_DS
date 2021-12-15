@@ -94,16 +94,6 @@ def processColonnaCarico(stb_data):
     stb_data["max_load"] = stb_data[["load1", "load2", "load3"]].max(axis=1)
     stb_data.drop(columns=["load_average", "load1", "load2", "load3"], inplace=True)
 
-def soloStati(stb_data):
-    cols = stb_data.columns
-    colDaEliminare = cols[cols.str.contains("osm") | cols.str.contains("err") | cols.str.contains("info") | cols.str.contains("warn")]
-    stb_data.drop(columns = colDaEliminare, inplace=True)
-
-def soloEventi(stb_data):
-    cols = stb_data.columns
-    colDaEliminare = cols[(~cols.str.contains("osm")) & (~cols.str.contains("err")) & (~cols.str.contains("info")) & (~cols.str.contains("mac")) & (~cols.str.contains("time")) & (~cols.str.contains("warn"))]
-    stb_data.drop(columns = colDaEliminare, inplace=True)
-
 def processaColonne(stb_data):
     #estraggo i valori di interesse da ogni colonna con dati innestati creando una nuova colonna per ogni dato
     processaColonneSplit(stb_data)
@@ -121,16 +111,12 @@ def preparaDatiPerAnalisi(stb_data):
     gestioneValoriMancanti(stb_data)
     rimuoviDuplicati(stb_data)
 
-def preparaDatiPerReportStati(stb_data):
+def preparaDatiPerReport(stb_data):
     rinominaColonne(stb_data)
     eliminaColonne(stb_data)
     processaColonne(stb_data)
     gestioneValoriMancanti(stb_data)
-    soloStati(stb_data)
 
-def preparaDatiPerReportEventi(stb_data):
-    rinominaColonne(stb_data)
-    eliminaColonne(stb_data)
-    processaColonne(stb_data)
-    gestioneValoriMancanti(stb_data)
-    soloEventi(stb_data)
+    # Reminder; di qui poi leggere in questo modo: (il True aggiunge mac e time alle colonne)
+    # stb_data[lettura_dati.getEventiCols(stb_data, True)]
+    # stb_data[lettura_dati.getStatiCols(stb_data, True)]
