@@ -17,7 +17,7 @@ def rinominaColonne(stb_data):
     # rinomino ap_info_split; tutte le colonne evento (info/warn/err) devono essere counter; ap_info_split contiene dati
     stb_data.rename(columns={"ap_info_split": "ap_split"}, inplace=True)
 
-def gestioneValoriMancanti(stb_data):
+def gestioneValoriMancantiEventi(stb_data):
     eventCols = lettura_dati.getEventiCols(stb_data)
     for col in eventCols:
         stb_data[col].replace(np.nan, 0, inplace=True)
@@ -45,13 +45,6 @@ def eliminaColonneEventiMaiAvvenuti(stb_data):
         if (stb_data[col].sum() == 0):
             colsDaRimuovere.append(col)
     stb_data.drop(columns=colsDaRimuovere, inplace=True)
-
-def eliminaColonne(stb_data):
-    eliminaSplitNonRichiesti(stb_data)
-
-    eliminaOsmSecondari(stb_data)
-    eliminaEventiSecondari(stb_data)
-    eliminaColonneEventiMaiAvvenuti(stb_data)
 
 def lasciaSoloOsmPrincipali(stb_data):
     osmPrincipali = ["syst_info_osm_bbdconnect_ott", "syst_info_osm_berr_atv", "syst_info_osm_contentnotfound", "syst_info_osm_ottbuffering", "syst_info_osm_techfaultott_atv"]
@@ -103,19 +96,22 @@ def processaColonne(stb_data):
 def rimuoviDuplicati(stb_data):
     stb_data.drop_duplicates(inplace=True)
 
-def preparaDatiPerAnalisi(stb_data):
+def preparaDati(stb_data):
     rinominaColonne(stb_data)
-    eliminaColonne(stb_data)
-    eliminaRighe(stb_data)
+    eliminaSplitNonRichiesti(stb_data)
     processaColonne(stb_data)
-    gestioneValoriMancanti(stb_data)
+    gestioneValoriMancantiEventi(stb_data)
     rimuoviDuplicati(stb_data)
 
+def preparaDatiPerAnalisi(stb_data):
+    preparaDati(stb_data)
+    eliminaOsmSecondari(stb_data)
+    eliminaEventiSecondari(stb_data)
+    eliminaColonneEventiMaiAvvenuti(stb_data)
+    eliminaRighe(stb_data)
+
 def preparaDatiPerReport(stb_data):
-    rinominaColonne(stb_data)
-    eliminaColonne(stb_data)
-    processaColonne(stb_data)
-    gestioneValoriMancanti(stb_data)
+    preparaDati(stb_data)
 
     # Reminder; di qui poi leggere in questo modo: (il True aggiunge mac e time alle colonne)
     # stb_data[lettura_dati.getEventiCols(stb_data, True)]
