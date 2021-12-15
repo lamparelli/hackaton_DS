@@ -17,17 +17,13 @@ def rinominaColonne(stb_data):
     # rinomino ap_info_split; tutte le colonne evento (info/warn/err) devono essere counter; ap_info_split contiene dati
     stb_data.rename(columns={"ap_info_split": "ap_split"}, inplace=True)
 
-def gestioneValoriMancanti(stb_data):
+def fillValoriMancantiEventi(stb_data):
     eventCols = lettura_dati.getEventiCols(stb_data)
     for col in eventCols:
         stb_data[col].replace(np.nan, 0, inplace=True)
 
 def eliminaOsmSecondari(stb_data):
-    # il cliente ha detto di concentrarsi su queste colonne osm; sono secondarie le altre
-    osmPrincipali = ["syst_info_osm_bbdconnect_ott", "syst_info_osm_berr_atv", "syst_info_osm_contentnotfound", "syst_info_osm_ottbuffering", "syst_info_osm_techfaultott_atv"]
-    osmCols = lettura_dati.getEventiOsmCols(stb_data)
-    osmColsDaEliminare = osmCols.drop(osmPrincipali) # sono da eliminare tutte le osm, tranne le principali
-    stb_data.drop(columns = osmColsDaEliminare, inplace=True)
+    stb_data.drop(columns = ["syst_info_osm_ottbuff"], inplace=True)
 
 def eliminaEventiSecondari(stb_data):
     # il cliente ha suggerito di concentrarsi sugli eventi di tipo warn / err, e ignorare quelli info
@@ -50,13 +46,11 @@ def eliminaColonneEventiMaiAvvenuti(stb_data):
             colsDaRimuovere.append(col)
     stb_data.drop(columns=colsDaRimuovere, inplace=True)
 
-def eliminaColonne(stb_data):
-    eliminaSplitNonRichiesti(stb_data)
-
-    # da valutare se filtrare o meno i dati secondari
-    # eliminaOsmSecondari(stb_data)
-    eliminaEventiSecondari(stb_data)
-    eliminaColonneEventiMaiAvvenuti(stb_data)
+def lasciaSoloOsmPrincipali(stb_data):
+    osmPrincipali = ["syst_info_osm_bbdconnect_ott", "syst_info_osm_berr_atv", "syst_info_osm_contentnotfound", "syst_info_osm_ottbuffering", "syst_info_osm_techfaultott_atv"]
+    osmCols = lettura_dati.getEventiOsmCols(stb_data)
+    osmColsDaEliminare = osmCols.drop(osmPrincipali) # sono da eliminare tutte le osm, tranne le principali
+    stb_data.drop(columns = osmColsDaEliminare, inplace=True)
 
 def eliminaRigheSenzaOsm(stb_data):
     # In messaggi_presenti, c'è true nelle righe che hanno almeno un evento OSM, false altrimenti
@@ -93,16 +87,6 @@ def processColonnaCarico(stb_data):
     stb_data["max_load"] = stb_data[["load1", "load2", "load3"]].max(axis=1)
     stb_data.drop(columns=["load_average", "load1", "load2", "load3"], inplace=True)
 
-def soloStati(stb_data):
-    cols = stb_data.columns
-    colDaEliminare = cols[cols.str.contains("osm") | cols.str.contains("err") | cols.str.contains("info") | cols.str.contains("warn")]
-    stb_data.drop(columns = colDaEliminare, inplace=True)
-
-def soloEventi(stb_data):
-    cols = stb_data.columns
-    colDaEliminare = cols[(~cols.str.contains("osm")) & (~cols.str.contains("err")) & (~cols.str.contains("info")) & (~cols.str.contains("mac")) & (~cols.str.contains("time")) & (~cols.str.contains("warn"))]
-    stb_data.drop(columns = colDaEliminare, inplace=True)
-
 def processaColonne(stb_data):
     #estraggo i valori di interesse da ogni colonna con dati innestati creando una nuova colonna per ogni dato
     processaColonneSplit(stb_data)
@@ -112,24 +96,23 @@ def processaColonne(stb_data):
 def rimuoviDuplicati(stb_data):
     stb_data.drop_duplicates(inplace=True)
 
-def preparaDatiPerAnalisi(stb_data):
+def preparaDati(stb_data):
     rinominaColonne(stb_data)
-    eliminaColonne(stb_data)
-    eliminaRighe(stb_data)
+    eliminaSplitNonRichiesti(stb_data)
     processaColonne(stb_data)
-    gestioneValoriMancanti(stb_data)
+    fillValoriMancantiEventi(stb_data)
     rimuoviDuplicati(stb_data)
 
-def preparaDatiPerReportStati(stb_data):
-    rinominaColonne(stb_data)
-    eliminaColonne(stb_data)
-    processaColonne(stb_data)
-    gestioneValoriMancanti(stb_data)
-    soloStati(stb_data)
+def preparaDatiPerAnalisi(stb_data):
+    preparaDati(stb_data)
+    eliminaOsmSecondari(stb_data)
+    eliminaEventiSecondari(stb_data)
+    eliminaColonneEventiMaiAvvenuti(stb_data)
+    eliminaRighe(stb_data)
 
-def preparaDatiPerReportEventi(stb_data):
-    rinominaColonne(stb_data)
-    eliminaColonne(stb_data)
-    processaColonne(stb_data)
-    gestioneValoriMancanti(stb_data)
-    soloEventi(stb_data)
+def preparaDatiPerReport(stb_data):
+    preparaDati(stb_data)
+
+    # Reminder; di qui poi leggere in questo modo: (il True aggiunge mac e time alle colonne)
+    # stb_data[lettura_dati.getEventiCols(stb_data, True)]
+    # stb_data[lettura_dati.getStatiCols(stb_data, True)]
