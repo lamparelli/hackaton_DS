@@ -89,9 +89,13 @@ def processaColonne(stb_data):
     processaColonneMem(stb_data)
     processColonnaCarico(stb_data)
 
+def rimuoviDuplicati(stb_data):
+    stb_data.drop_duplicates(inplace=True)
+
 def preparaDatiPerAnalisi(stb_data):
     rinominaColonne(stb_data)
     eliminaColonne(stb_data)
     eliminaRighe(stb_data)
     processaColonne(stb_data)
     gestioneValoriMancanti(stb_data)
+    rimuoviDuplicati(stb_data)
