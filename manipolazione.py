@@ -41,12 +41,22 @@ def eliminaSplitNonRichiesti(stb_data):
     colsDaEliminare = cols[(cols.str.contains("_split") & (~cols.str.contains("aamp_abr_bw_split") & (~cols.str.contains("ap_split"))))] 
     stb_data.drop(columns=colsDaEliminare, inplace=True) 
 
+def eliminaColonneEventiMaiAvvenuti(stb_data):
+    # da chiamare dopo il filtro che lascia solo le righe con almeno un OSM; 
+    # rimuove le colonne di eventi (background) che non si verificano mai quando ci sono OSM
+    colsDaRimuovere = []
+    for col in lettura_dati.getEventiBackgroundCols(stb_data):
+        if (stb_data[col].sum() == 0):
+            colsDaRimuovere.append(col)
+    stb_data.drop(columns=colsDaRimuovere, inplace=True)
+
 def eliminaColonne(stb_data):
     eliminaSplitNonRichiesti(stb_data)
 
     # da valutare se filtrare o meno i dati secondari
     # eliminaOsmSecondari(stb_data)
-    # eliminaEventiSecondari(stb_data)
+    eliminaEventiSecondari(stb_data)
+    eliminaColonneEventiMaiAvvenuti(stb_data)
 
 def eliminaRigheSenzaOsm(stb_data):
     # In messaggi_presenti, c'è true nelle righe che hanno almeno un evento OSM, false altrimenti
