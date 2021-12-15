@@ -96,13 +96,13 @@ def rimuoviDuplicati(stb_data):
 def preparaDati(stb_data):
     rinominaColonne(stb_data)
     eliminaSplitNonRichiesti(stb_data)
+    eliminaOsmSuperflui(stb_data)
     processaColonne(stb_data)
     fillValoriMancantiEventi(stb_data)
     rimuoviDuplicati(stb_data)
 
 def preparaDatiPerAnalisi(stb_data):
     preparaDati(stb_data)
-    eliminaOsmSuperflui(stb_data)
     eliminaEventiSecondari(stb_data)
     eliminaColonneEventiMaiAvvenuti(stb_data)
     eliminaRigheSenzaOsm(stb_data)
