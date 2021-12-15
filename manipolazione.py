@@ -51,7 +51,7 @@ def eliminaColonne(stb_data):
 def eliminaRigheSenzaOsm(stb_data):
     # In messaggi_presenti, c'è true nelle righe che hanno almeno un evento OSM, false altrimenti
     stb_data["messaggi_presenti"] = stb_data[lettura_dati.getEventiOsmCols(stb_data)].sum(axis=1) > 0
-    stb_data.drop(stb_data[stb_data["messaggi_presenti"]].index, inplace=True)
+    stb_data.drop(stb_data[~stb_data["messaggi_presenti"]].index, inplace=True)
 
 def eliminaRighe(stb_data):
     eliminaRigheSenzaOsm(stb_data)
