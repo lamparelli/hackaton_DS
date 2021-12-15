@@ -22,7 +22,7 @@ def fillValoriMancantiEventi(stb_data):
     for col in eventCols:
         stb_data[col].replace(np.nan, 0, inplace=True)
 
-def eliminaOsmSecondari(stb_data):
+def eliminaOsmSuperflui(stb_data):
     stb_data.drop(columns = ["syst_info_osm_ottbuff"], inplace=True)
 
 def eliminaEventiSecondari(stb_data):
@@ -105,7 +105,7 @@ def preparaDati(stb_data):
 
 def preparaDatiPerAnalisi(stb_data):
     preparaDati(stb_data)
-    eliminaOsmSecondari(stb_data)
+    eliminaOsmSuperflui(stb_data)
     eliminaEventiSecondari(stb_data)
     eliminaColonneEventiMaiAvvenuti(stb_data)
     eliminaRighe(stb_data)
