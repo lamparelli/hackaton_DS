@@ -109,3 +109,5 @@ def preparaDatiPerAnalisi(stb_data):
 
 def preparaDatiPerReport(stb_data):
     preparaDati(stb_data)
+    lasciaSoloColonneOsmPrincipali(stb_data)
+    eliminaRigheSenzaOsm(stb_data)
