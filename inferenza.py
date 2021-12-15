@@ -21,11 +21,16 @@ def convertiDatiBasketInInfoPresenza(datoBasket):
     else:
         return 0
 
+def convertiFormatoDati(regoleAssociative):
+    regoleAssociative["antecedents"] = regoleAssociative["antecedents"].astype(str).str.extract(r'\(\{\'(.+)\'\}\)')
+    regoleAssociative["consequents"] = regoleAssociative["consequents"].astype(str).str.extract(r'\(\{\'(.+)\'\}\)')
+
 def getCausaliOsm(stb_data):
     datiBasket = getDatiBasket(stb_data)
     datiPresenza = datiBasket.applymap(convertiDatiBasketInInfoPresenza)
     setFrequenti = apriori(datiPresenza, min_support=0.05, use_colnames=True)
     regoleAssociative = association_rules(setFrequenti, metric="lift", min_threshold=2)
+    convertiFormatoDati(regoleAssociative)
     return regoleAssociative.sort_values("lift", ascending=False)
 
 
