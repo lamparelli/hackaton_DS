@@ -17,7 +17,7 @@ def rinominaColonne(stb_data):
     # rinomino ap_info_split; tutte le colonne evento (info/warn/err) devono essere counter; ap_info_split contiene dati
     stb_data.rename(columns={"ap_info_split": "ap_split"}, inplace=True)
 
-def gestioneValoriMancantiEventi(stb_data):
+def fillValoriMancantiEventi(stb_data):
     eventCols = lettura_dati.getEventiCols(stb_data)
     for col in eventCols:
         stb_data[col].replace(np.nan, 0, inplace=True)
@@ -100,7 +100,7 @@ def preparaDati(stb_data):
     rinominaColonne(stb_data)
     eliminaSplitNonRichiesti(stb_data)
     processaColonne(stb_data)
-    gestioneValoriMancantiEventi(stb_data)
+    fillValoriMancantiEventi(stb_data)
     rimuoviDuplicati(stb_data)
 
 def preparaDatiPerAnalisi(stb_data):
