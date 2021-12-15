@@ -16,6 +16,7 @@ from sklearn.metrics import r2_score
 from sklearn.preprocessing import LabelEncoder
 import manipolazione
 import lettura_dati
+from sklearn import preprocessing
 
 def splitTrainVal(data, percentualeSplit = 0.8):
     dataShuffled = data.copy().sample(frac=1) #shuffle
@@ -81,6 +82,10 @@ def printFeatures(xCols, mod):
     for i, j in zip(xCols, mod.feature_importances_):
         print(i, j)
 
+def scaling(stb_data, osmCol):
+    cols = stb_data.columns.drop(osmCol)
+    stb_data[cols] = preprocessing.StandardScaler().fit_transform(stb_data[cols])
+
 def prevediOsm(stb_data, osmCol):
     manipolazione.preparaDatiPerPredizione(stb_data)
     stati_data = stb_data[lettura_dati.getStatiCols(stb_data)]
@@ -89,6 +94,7 @@ def prevediOsm(stb_data, osmCol):
     encodingStringhe(stati_data)
     encodingY(stati_data, osmCol)
 
+    scaling(stati_data, osmCol)
     train, val = splitTrainVal(stati_data)
     train = getOversampling(train, osmCol)
 
