@@ -51,7 +51,7 @@ def eliminaColonne(stb_data):
 def eliminaRigheSenzaOsm(stb_data):
     # In messaggi_presenti, c'è true nelle righe che hanno almeno un evento OSM, false altrimenti
     stb_data["messaggi_presenti"] = stb_data[lettura_dati.getEventiOsmCols(stb_data)].sum(axis=1) > 0
-    stb_data.drop(stb_data[stb_data["messaggi_presenti"]].index, inplace=True)
+    stb_data.drop(stb_data[~stb_data["messaggi_presenti"]].index, inplace=True)
 
 def eliminaRighe(stb_data):
     eliminaRigheSenzaOsm(stb_data)
@@ -75,9 +75,9 @@ def processaColonneMem(stb_data):
         stb_data[col] = stb_data[col].str.extract(r'^([0-9]+)m$', expand=True).astype(float)
 
 def processColonnaCarico(stb_data):
-    stb_data["load1"] = stb_data["load_average"].str.extract(r'^(0\.[0-9]+) 0\.[0-9]+ 0\.[0-9]+').astype(float)
-    stb_data["load2"] = stb_data["load_average"].str.extract(r'^0\.[0-9]+ (0\.[0-9]+) 0\.[0-9]+').astype(float)
-    stb_data["load3"] = stb_data["load_average"].str.extract(r'^0\.[0-9]+ 0\.[0-9]+ (0\.[0-9]+)').astype(float)
+    stb_data["load1"] = stb_data["load_average"].str.extract(r'^([0-9]+\.[0-9]+) [0-9]+\.[0-9]+ [0-9]+\.[0-9]+').astype(float)
+    stb_data["load2"] = stb_data["load_average"].str.extract(r'^[0-9]+\.[0-9]+ ([0-9]+\.[0-9]+) [0-9]+\.[0-9]+').astype(float)
+    stb_data["load3"] = stb_data["load_average"].str.extract(r'^[0-9]+\.[0-9]+ [0-9]+\.[0-9]+ ([0-9]+\.[0-9]+)').astype(float)
     
     stb_data["avg_load"] = stb_data[["load1", "load2", "load3"]].mean(axis=1)
     stb_data["max_load"] = stb_data[["load1", "load2", "load3"]].max(axis=1)
@@ -89,9 +89,13 @@ def processaColonne(stb_data):
     processaColonneMem(stb_data)
     processColonnaCarico(stb_data)
 
+def rimuoviDuplicati(stb_data):
+    stb_data.drop_duplicates(inplace=True)
+
 def preparaDatiPerAnalisi(stb_data):
     rinominaColonne(stb_data)
     eliminaColonne(stb_data)
     eliminaRighe(stb_data)
     processaColonne(stb_data)
     gestioneValoriMancanti(stb_data)
+    rimuoviDuplicati(stb_data)
