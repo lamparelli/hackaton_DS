@@ -102,8 +102,8 @@ def prevediOsm(stb_data, osmCol):
     xTrain = imp.transform(xTrain)
     xVal = imp.transform(xVal)
 
-    modRF = getModelloRandForest(xTrain, yTrain)
-    yPred = modRF.predict(xVal)
+    mod = getModelloRandForest(xTrain, yTrain)
+    yPred = mod.predict(xVal)
     print_metrics(yVal, yPred)
     print("---")
-    printFeatures(xCols, modRF)
+    printFeatures(xCols, mod)
