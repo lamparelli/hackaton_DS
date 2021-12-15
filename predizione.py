@@ -69,6 +69,8 @@ def encodingStringhe(stb_data):
 
 def encodingY(stb_data, osmCol):
     stb_data[osmCol] = stb_data[osmCol].apply(lambda counter: True if counter > 0 else False)
+    encoder = LabelEncoder()
+    stb_data[osmCol] = encoder.fit_transform(stb_data[osmCol])
 
 def getModelloRandForest(xTrain, yTrain):
     mod = RandomForestClassifier(n_estimators=100, criterion = "gini", max_features = 'auto')
