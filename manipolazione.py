@@ -112,7 +112,3 @@ def preparaDatiPerAnalisi(stb_data):
 
 def preparaDatiPerReport(stb_data):
     preparaDati(stb_data)
-
-    # Reminder; di qui poi leggere in questo modo: (il True aggiunge mac e time alle colonne)
-    # stb_data[lettura_dati.getEventiCols(stb_data, True)]
-    # stb_data[lettura_dati.getStatiCols(stb_data, True)]
