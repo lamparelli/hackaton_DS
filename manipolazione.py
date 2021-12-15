@@ -23,11 +23,7 @@ def gestioneValoriMancanti(stb_data):
         stb_data[col].replace(np.nan, 0, inplace=True)
 
 def eliminaOsmSecondari(stb_data):
-    # il cliente ha detto di concentrarsi su queste colonne osm; sono secondarie le altre
-    osmPrincipali = ["syst_info_osm_bbdconnect_ott", "syst_info_osm_berr_atv", "syst_info_osm_contentnotfound", "syst_info_osm_ottbuffering", "syst_info_osm_techfaultott_atv"]
-    osmCols = lettura_dati.getEventiOsmCols(stb_data)
-    osmColsDaEliminare = osmCols.drop(osmPrincipali) # sono da eliminare tutte le osm, tranne le principali
-    stb_data.drop(columns = osmColsDaEliminare, inplace=True)
+    stb_data.drop(columns = ["syst_info_osm_ottbuff"], inplace=True)
 
 def eliminaEventiSecondari(stb_data):
     # il cliente ha suggerito di concentrarsi sugli eventi di tipo warn / err, e ignorare quelli info
@@ -53,10 +49,15 @@ def eliminaColonneEventiMaiAvvenuti(stb_data):
 def eliminaColonne(stb_data):
     eliminaSplitNonRichiesti(stb_data)
 
-    # da valutare se filtrare o meno i dati secondari
-    # eliminaOsmSecondari(stb_data)
+    eliminaOsmSecondari(stb_data)
     eliminaEventiSecondari(stb_data)
     eliminaColonneEventiMaiAvvenuti(stb_data)
+
+def lasciaSoloOsmPrincipali(stb_data):
+    osmPrincipali = ["syst_info_osm_bbdconnect_ott", "syst_info_osm_berr_atv", "syst_info_osm_contentnotfound", "syst_info_osm_ottbuffering", "syst_info_osm_techfaultott_atv"]
+    osmCols = lettura_dati.getEventiOsmCols(stb_data)
+    osmColsDaEliminare = osmCols.drop(osmPrincipali) # sono da eliminare tutte le osm, tranne le principali
+
 
 def eliminaRigheSenzaOsm(stb_data):
     # In messaggi_presenti, c'è true nelle righe che hanno almeno un evento OSM, false altrimenti
