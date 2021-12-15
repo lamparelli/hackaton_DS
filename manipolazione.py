@@ -75,9 +75,9 @@ def processaColonneMem(stb_data):
         stb_data[col] = stb_data[col].str.extract(r'^([0-9]+)m$', expand=True).astype(float)
 
 def processColonnaCarico(stb_data):
-    stb_data["load1"] = stb_data["load_average"].str.extract(r'^(0\.[0-9]+) 0\.[0-9]+ 0\.[0-9]+').astype(float)
-    stb_data["load2"] = stb_data["load_average"].str.extract(r'^0\.[0-9]+ (0\.[0-9]+) 0\.[0-9]+').astype(float)
-    stb_data["load3"] = stb_data["load_average"].str.extract(r'^0\.[0-9]+ 0\.[0-9]+ (0\.[0-9]+)').astype(float)
+    stb_data["load1"] = stb_data["load_average"].str.extract(r'^([0-9]+\.[0-9]+) [0-9]+\.[0-9]+ [0-9]+\.[0-9]+').astype(float)
+    stb_data["load2"] = stb_data["load_average"].str.extract(r'^[0-9]+\.[0-9]+ ([0-9]+\.[0-9]+) [0-9]+\.[0-9]+').astype(float)
+    stb_data["load3"] = stb_data["load_average"].str.extract(r'^[0-9]+\.[0-9]+ [0-9]+\.[0-9]+ ([0-9]+\.[0-9]+)').astype(float)
     
     stb_data["avg_load"] = stb_data[["load1", "load2", "load3"]].mean(axis=1)
     stb_data["max_load"] = stb_data[["load1", "load2", "load3"]].max(axis=1)
