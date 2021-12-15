@@ -22,16 +22,16 @@ def fillValoriMancantiEventi(stb_data):
     for col in eventCols:
         stb_data[col].replace(np.nan, 0, inplace=True)
 
-def eliminaOsmSuperflui(stb_data):
+def eliminaColonneOsmSuperflui(stb_data):
     stb_data.drop(columns = ["syst_info_osm_ottbuff"], inplace=True)
 
-def eliminaEventiSecondari(stb_data):
+def eliminaColonneEventiSecondari(stb_data):
     # il cliente ha suggerito di concentrarsi sugli eventi di tipo warn / err, e ignorare quelli info
     eventiBg = lettura_dati.getEventiBackgroundCols(stb_data)
     eventiBgDaDroppare = eventiBg[eventiBg.str.contains("info")]
     stb_data.drop(columns=eventiBgDaDroppare, inplace=True)
 
-def eliminaSplitNonRichiesti(stb_data):
+def eliminaColonneSplitNonRichiesti(stb_data):
     # il cliente ha detto di lasciare, fra le colonne son split nel nome, solo aamp_abr_bw_split e ap_split
     cols = stb_data.columns
     colsDaEliminare = cols[(cols.str.contains("_split") & (~cols.str.contains("aamp_abr_bw_split") & (~cols.str.contains("ap_split"))))] 
@@ -46,7 +46,7 @@ def eliminaColonneEventiMaiAvvenuti(stb_data):
             colsDaRimuovere.append(col)
     stb_data.drop(columns=colsDaRimuovere, inplace=True)
 
-def lasciaSoloOsmPrincipali(stb_data):
+def lasciaSoloColonneOsmPrincipali(stb_data):
     osmPrincipali = ["syst_info_osm_bbdconnect_ott", "syst_info_osm_berr_atv", "syst_info_osm_contentnotfound", "syst_info_osm_ottbuffering", "syst_info_osm_techfaultott_atv"]
     osmCols = lettura_dati.getEventiOsmCols(stb_data)
     osmColsDaEliminare = osmCols.drop(osmPrincipali) # sono da eliminare tutte le osm, tranne le principali
@@ -95,15 +95,15 @@ def rimuoviDuplicati(stb_data):
 
 def preparaDati(stb_data):
     rinominaColonne(stb_data)
-    eliminaSplitNonRichiesti(stb_data)
-    eliminaOsmSuperflui(stb_data)
+    eliminaColonneSplitNonRichiesti(stb_data)
+    eliminaColonneOsmSuperflui(stb_data)
     processaColonne(stb_data)
     fillValoriMancantiEventi(stb_data)
     rimuoviDuplicati(stb_data)
 
 def preparaDatiPerAnalisi(stb_data):
     preparaDati(stb_data)
-    eliminaEventiSecondari(stb_data)
+    eliminaColonneEventiSecondari(stb_data)
     eliminaColonneEventiMaiAvvenuti(stb_data)
     eliminaRigheSenzaOsm(stb_data)
 
