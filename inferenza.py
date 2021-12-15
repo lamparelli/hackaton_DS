@@ -3,6 +3,9 @@ import lettura_dati
 from mlxtend.frequent_patterns import apriori
 from mlxtend.frequent_patterns import association_rules
 
+minSupport = 0.001
+minLift = 2
+
 def getDatiEventiWideToLong(stb_data):
     stb_data2 = stb_data.copy()
     stb_data2["id"] = stb_data["mac"] + "_" + stb_data["time"]
@@ -26,17 +29,30 @@ def convertiFormatoDati(regoleAssociative):
     regoleAssociative["antecedents"] = regoleAssociative["antecedents"].astype(str).str.extract(r'\(\{\'(.+)\'\}\)')
     regoleAssociative["consequents"] = regoleAssociative["consequents"].astype(str).str.extract(r'\(\{\'(.+)\'\}\)')
 
-def filtraRegole(regoleAssociative):
-    # mantengo solo le regole che hanno come conseguenza associativa un osm
+def filtraOsmInConseguenze(regoleAssociative):
     return regoleAssociative[regoleAssociative["consequents"].str.contains("osm")]
 
-def getCausaliOsm(stb_data):
+def filtraOsmPrincipaliInConseguenze(regoleAssociative):
+    osmPrincipali = ["syst_info_osm_bbdconnect_ott", "syst_info_osm_berr_atv", "syst_info_osm_contentnotfound", 
+    "syst_info_osm_ottbuffering", "syst_info_osm_techfaultott_atv"]
+    return regoleAssociative[regoleAssociative["consequents"].str.contains("|".join(osmPrincipali))]
+
+def filtraRegole(regoleAssociative):
+    # mantengo solo le regole che hanno come conseguenza associativa un osm
+    return filtraOsmPrincipaliInConseguenze(regoleAssociative)
+
+def getCausaliOsm(stb_data, support = None, lift = None):
+    chosenSupport = minSupport
+    chosenLift = minLift
+    if (support is not None):
+        chosenSupport = support
+    if (lift is not None):
+        chosenLift = lift
+
     datiBasket = getDatiBasket(stb_data)
     datiPresenza = datiBasket.applymap(convertiDatiBasketInInfoPresenza)
-    setFrequenti = apriori(datiPresenza, min_support=0.05, use_colnames=True)
-    regoleAssociative = association_rules(setFrequenti, metric="lift", min_threshold=2)
+    setFrequenti = apriori(datiPresenza, min_support=chosenSupport, use_colnames=True)
+    regoleAssociative = association_rules(setFrequenti, metric="lift", min_threshold=chosenLift)
     convertiFormatoDati(regoleAssociative)
     regoleAssociative = filtraRegole(regoleAssociative)
     return regoleAssociative.sort_values("lift", ascending=False)
-
-
