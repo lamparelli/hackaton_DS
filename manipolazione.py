@@ -50,7 +50,7 @@ def lasciaSoloOsmPrincipali(stb_data):
     osmPrincipali = ["syst_info_osm_bbdconnect_ott", "syst_info_osm_berr_atv", "syst_info_osm_contentnotfound", "syst_info_osm_ottbuffering", "syst_info_osm_techfaultott_atv"]
     osmCols = lettura_dati.getEventiOsmCols(stb_data)
     osmColsDaEliminare = osmCols.drop(osmPrincipali) # sono da eliminare tutte le osm, tranne le principali
-
+    stb_data.drop(columns = osmColsDaEliminare, inplace=True)
 
 def eliminaRigheSenzaOsm(stb_data):
     # In messaggi_presenti, c'è true nelle righe che hanno almeno un evento OSM, false altrimenti
