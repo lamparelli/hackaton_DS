@@ -22,6 +22,6 @@ def getEventiOsmCols(stb_data, getIdCols = False):
 def getStatiCols(stb_data, getIdCols = False):
     cols = stb_data.columns
     if (getIdCols):
-        return cols[~cols.str.contains("err|warn|info") | cols.str.contains("mac|time")]
-    else:
         return cols[~cols.str.contains("err|warn|info")]
+    else:
+        return cols[~cols.str.contains("err|warn|info|mac|time")]
