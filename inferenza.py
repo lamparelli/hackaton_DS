@@ -22,8 +22,13 @@ def convertiDatiBasketInInfoPresenza(datoBasket):
         return 0
 
 def convertiFormatoDati(regoleAssociative):
+    # normalmente sono stringhe in formato frozenset, nelle quali non si può fare str.contains
     regoleAssociative["antecedents"] = regoleAssociative["antecedents"].astype(str).str.extract(r'\(\{\'(.+)\'\}\)')
     regoleAssociative["consequents"] = regoleAssociative["consequents"].astype(str).str.extract(r'\(\{\'(.+)\'\}\)')
+
+def filtraRegole(regoleAssociative):
+    # mantengo solo le regole che hanno come conseguenza associativa un osm
+    return regoleAssociative[regoleAssociative["consequents"].str.contains("osm")]
 
 def getCausaliOsm(stb_data):
     datiBasket = getDatiBasket(stb_data)
@@ -31,6 +36,7 @@ def getCausaliOsm(stb_data):
     setFrequenti = apriori(datiPresenza, min_support=0.05, use_colnames=True)
     regoleAssociative = association_rules(setFrequenti, metric="lift", min_threshold=2)
     convertiFormatoDati(regoleAssociative)
+    regoleAssociative = filtraRegole(regoleAssociative)
     return regoleAssociative.sort_values("lift", ascending=False)
 
 
