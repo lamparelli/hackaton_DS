@@ -3,7 +3,7 @@ import lettura_dati
 from mlxtend.frequent_patterns import apriori
 from mlxtend.frequent_patterns import association_rules
 
-minSupport = 0.001
+minSupport = 0.005
 minLift = 2
 
 def getDatiEventiWideToLong(stb_data):
