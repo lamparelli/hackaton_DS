@@ -83,3 +83,23 @@ def getDeterminantiOsmPrincipali(regole):
 
     datiDeterminanti = pd.concat(listeDeterminantiOsm)
     return datiDeterminanti
+
+def getDeterminantiProfilingPrincipali():
+    # variabili di stato ad alta correlazione per ogni OSM principale trovate in pandas profiling
+    return {
+        "syst_info_osm_ottbuffering": 
+            ["test_policyfail", "syst_info_osm_techfaultott_atv", "syst_info_osm_berr_atv"],
+        "syst_info_osm_techfaultott_atv":
+            ["syst_info_osm_ottbuffering"],
+        "syst_info_osm_berr_atv":
+            ["mem_wpenetworkprocess", "mem_wpewebprocess", "mem_rdkbrowser2", 
+            "test_policyfail", "syst_info_osm_ottbuffering", "test_ipnotset", "aamp_abr_bw_split_nwbw"],
+        "syst_info_osm_bbdconnect_ott":
+            ["mem_wpenetworkprocess", "mem_wpewebprocess", "mem_rdkbrowser2", "rdk-10039",
+            "mem_mediarite", "mem_tr69hostif", "test_ipnotset"],
+        "syst_info_osm_contentnotfound":
+            ["mem_wpenetworkprocess", "mem_wpewebprocess", "mem_rdkbrowser2", 
+            "aamp_keystatus_spilt", "test_dns_fileempty", 
+            "cpu_mediarite", "cpu_epg_ui", "cpu_tr69hostif", "test_bitratechange"
+            ]
+    }
