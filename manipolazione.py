@@ -75,6 +75,12 @@ def processaColonneMem(stb_data):
     for col in colsMem:
         stb_data[col] = stb_data[col].str.extract(r'^([0-9]+)m$', expand=True).astype(float)
 
+def processaColonnaTempo(stb_data):
+    stb_data["time_hour"] = stb_data["time"].str.extract(r"T([0-9]{2}):").astype(int)
+    stb_data["time_fasciaoraria"] = stb_data["time_hour"].apply(
+        lambda hour: "night" if (hour >= 0 and hour < 6) else "morning" if (hour >= 6 and hour < 12)
+        else "afternoon" if (hour >= 12 and hour < 19) else "evening")
+
 def processColonnaCarico(stb_data):
     stb_data["load1"] = stb_data["load_average"].str.extract(r'^([0-9]+\.[0-9]+) [0-9]+\.[0-9]+ [0-9]+\.[0-9]+').astype(float)
     stb_data["load2"] = stb_data["load_average"].str.extract(r'^[0-9]+\.[0-9]+ ([0-9]+\.[0-9]+) [0-9]+\.[0-9]+').astype(float)
@@ -89,6 +95,7 @@ def processaColonne(stb_data):
     processaColonneSplit(stb_data)
     processaColonneMem(stb_data)
     processColonnaCarico(stb_data)
+    processaColonnaTempo(stb_data)
 
 def rimuoviDuplicati(stb_data):
     stb_data.drop_duplicates(inplace=True)
