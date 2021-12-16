@@ -8,7 +8,7 @@ import os
 printReportEventi = True
 printReportStati = False
 
-stb_data = pd.read_csv("data" + os.sep + "datiOutput.csv")
+stb_data = pd.read_csv("data" + os.sep + "datiInput.csv")
 manipolazione.preparaDatiPerReport(stb_data)
 
 pd.options.display.width = 0
