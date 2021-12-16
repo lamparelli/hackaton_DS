@@ -56,3 +56,30 @@ def getCausaliOsm(stb_data, support = None, lift = None):
     convertiFormatoDati(regoleAssociative)
     regoleAssociative = filtraRegole(regoleAssociative)
     return regoleAssociative.sort_values("lift", ascending=False)
+
+def getDeterminantiDiUnOsm(regole, osm):
+    regoleConOsmInConseguenti = regole[regole["consequents"].str.contains(osm)]
+    gruppiAntecedentiDellOsm = regoleConOsmInConseguenti["antecedents"].str.split(",")
+
+    determinanti = []
+
+    for gruppoAntecedenti in gruppiAntecedentiDellOsm:
+        for antecedente in gruppoAntecedenti:
+            determinanti.append(antecedente)
+
+    determinantiUnivoci = list(set(determinanti)) # rimuovo i duplicati
+    dati = pd.DataFrame({"determinanti": determinantiUnivoci})
+    dati["osm"] = osm
+    return dati
+
+def getDeterminantiOsmPrincipali(regole):
+    osmPrincipali = ["syst_info_osm_bbdconnect_ott", "syst_info_osm_berr_atv", 
+        "syst_info_osm_contentnotfound", "syst_info_osm_ottbuffering", "syst_info_osm_techfaultott_atv"]
+    
+    listeDeterminantiOsm = []
+    for osm in osmPrincipali:
+        determinantiOsm = getDeterminantiDiUnOsm(regole, osm)
+        listeDeterminantiOsm.append(determinantiOsm)
+
+    datiDeterminanti = pd.concat(listeDeterminantiOsm)
+    return datiDeterminanti
