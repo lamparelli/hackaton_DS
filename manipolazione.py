@@ -76,6 +76,7 @@ def processaColonneMem(stb_data):
         stb_data[col] = stb_data[col].str.extract(r'^([0-9]+)m$', expand=True).astype(float)
 
 def processaColonnaTempo(stb_data):
+    stb_data["time_date"] = stb_data["time"].str.extract(r"([0-9]{4}-[0-9]{2}-[0-9]{2})T")
     stb_data["time_hour"] = stb_data["time"].str.extract(r"T([0-9]{2}):").astype(int)
     stb_data["time_fasciaoraria"] = stb_data["time_hour"].apply(
         lambda hour: "night" if (hour >= 0 and hour < 6) else "morning" if (hour >= 6 and hour < 12)
